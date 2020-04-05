@@ -3,7 +3,7 @@ import piece
 
 
 class Board(object):
-    def __init(self):
+    def __init__(self):
         self.available_pieces = []
         self.board = [[None for _ in range(4)] for _ in range(4)]
 
@@ -69,5 +69,8 @@ class Board(object):
     def move(self, x, y, piece):
         if not self.is_move_allowed(x, y):
             return False
+        if piece not in self.available_pieces:
+            return False
         self.board[x][y] = piece
+        self.available_pieces.remove(piece)
         return True
