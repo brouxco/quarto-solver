@@ -5,5 +5,5 @@ class Game(object):
     def __init__(self):
         self.board = board.Board()
 
-    def find_best_move(self):
+    def find_losing_piece(self):
         pass

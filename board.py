@@ -10,41 +10,61 @@ class Board(object):
         for p in itertools.product([True, False], repeat=4):
             self.available_pieces.append(piece.Piece(*p))
 
+    def __str__(self):
+        res = ''
+        for row in range(4):
+            for col in range(4):
+                res += str(self.board[row][col]) + ' '
+            res += '\n'
+        return res
+
+    def __hash__(self):
+        return str(self).__hash__()
+
+    def __eq__(self, other_board):
+        if not isinstance(other_board, type(self)):
+            return False
+        return self.__hash__() == other_board.__hash__()
+
     def is_row_losing(self, row):
         return (self.board[row][0]
                 and self.board[row][1]
                 and self.board[row][2]
                 and self.board[row][3]
-                and self.board[row][0].has_in_common_with(self.board[row][1])
-                and self.board[row][1].has_in_common_with(self.board[row][2])
-                and self.board[row][2].has_in_common_with(self.board[row][3]))
+                and self.board[row][0].has_in_common_with(
+                    self.board[row][1],
+                    self.board[row][2],
+                    self.board[row][3]))
 
     def is_column_losing(self, col):
         return (self.board[0][col]
                 and self.board[1][col]
                 and self.board[2][col]
                 and self.board[3][col]
-                and self.board[0][col].has_in_common_with(self.board[1][col])
-                and self.board[1][col].has_in_common_with(self.board[2][col])
-                and self.board[2][col].has_in_common_with(self.board[3][col]))
+                and self.board[0][col].has_in_common_with(
+                    self.board[1][col],
+                    self.board[2][col],
+                    self.board[3][col]))
 
     def is_diagonal_losing(self):
         return (self.board[0][0]
                 and self.board[1][1]
                 and self.board[2][2]
                 and self.board[3][3]
-                and self.board[0][0].has_in_common_with(self.board[1][1])
-                and self.board[1][1].has_in_common_with(self.board[2][2])
-                and self.board[2][2].has_in_common_with(self.board[3][3]))
+                and self.board[0][0].has_in_common_with(
+                    self.board[1][1],
+                    self.board[2][2],
+                    self.board[3][3]))
 
     def is_reverse_diagonal_losing(self):
         return (self.board[0][3]
                 and self.board[1][2]
                 and self.board[2][1]
                 and self.board[3][0]
-                and self.board[0][3].has_in_common_with(self.board[1][2])
-                and self.board[1][2].has_in_common_with(self.board[2][1])
-                and self.board[2][1].has_in_common_with(self.board[3][0]))
+                and self.board[0][3].has_in_common_with(
+                    self.board[1][2],
+                    self.board[2][1],
+                    self.board[3][0]))
 
     def is_move_allowed(self, x, y):
         return self.board[x][y] is None
@@ -66,7 +86,7 @@ class Board(object):
                     moves.append((x, y))
         return moves
 
-    def move(self, x, y, piece):
+    def place(self, x, y, piece):
         if not self.is_move_allowed(x, y):
             return False
         if piece not in self.available_pieces:
