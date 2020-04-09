@@ -19,12 +19,61 @@ class Board(object):
         return res
 
     def __hash__(self):
-        return str(self).__hash__()
+        # We should have the same hash for identical boards
+        # even rotated and/or symmetrical boards
+        identical_boards = set()
+        for _ in range(4):
+            s = str(self)
+
+            self.__mirror_vertical()
+            s_m_v = str(self)
+            self.__mirror_vertical()
+
+            self.__mirror_horizontal()
+            s_m_h = str(self)
+            self.__mirror_horizontal()
+
+            self.__mirror_diagonal()
+            s_m_d = str(self)
+            self.__mirror_diagonal()
+
+            self.__mirror_reverse_diagonal()
+            s_m_r_d = str(self)
+            self.__mirror_reverse_diagonal()
+
+            self.__rotate_90()
+
+            identical_boards.add(s)
+            identical_boards.add(s_m_v)
+            identical_boards.add(s_m_h)
+            identical_boards.add(s_m_d)
+            identical_boards.add(s_m_r_d)
+        res = ''
+        for board in sorted(identical_boards, key=str):
+            res += str(board)
+        return res.__hash__()
 
     def __eq__(self, other_board):
         if not isinstance(other_board, type(self)):
             return False
         return self.__hash__() == other_board.__hash__()
+
+    def __rotate_90(self):
+        self.board = [list(reversed(x)) for x in zip(*self.board)]
+
+    def __mirror_vertical(self):
+        self.board = [list(reversed(x)) for x in self.board]
+
+    def __mirror_horizontal(self):
+        self.board = [list(x) for x in reversed(self.board)]
+
+    def __mirror_diagonal(self):
+        self.board = [list(x) for x in zip(*self.board)]
+
+    def __mirror_reverse_diagonal(self):
+        self.__mirror_vertical()
+        self.__mirror_diagonal()
+        self.__mirror_vertical()
 
     def is_row_losing(self, row):
         return (self.board[row][0]
