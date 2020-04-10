@@ -2,21 +2,24 @@ import game
 import piece
 import board
 import copy
+import argparse
 
 boards_scores = dict()
 
 
 # return score, losing_piece
-def find_losing_piece(board, enemy):
+def find_losing_piece(board, opponent):
     if hash(board) in boards_scores:
+        # BUG(brouxco): This may be invalid, the board score depends on the
+        # player. We have to return the board score for the player
         return boards_scores[hash(board)]
     if board.is_move_losing():
-        return 1 if enemy else -1, None
+        return 1 if opponent else -1, None
     if len(board.available_pieces) == 0:
         return 0, None
     original_board = copy.deepcopy(board)
     pieces_score = [0 for _ in original_board.available_pieces]
-    if not enemy:
+    if not opponent:
         for i, p in enumerate(original_board.available_pieces):
             for move in original_board.allowed_moves():
                 board.place(*move, p)
@@ -48,37 +51,37 @@ def find_losing_piece(board, enemy):
 
 
 def main():
-    b = board.Board()
-    # b.available_pieces = [piece.Piece(True, True, True, False),
-    #                       piece.Piece(True, True, True, True),
-    #                       piece.Piece(True, True, False, True),
-    #                       piece.Piece(True, True, False, False)]
-    # print(b.allowed_moves())
-    # print(*b.available_pieces)
-    b.place(0, 0, piece.Piece(True, True, True, True))
-    b.place(0, 1, piece.Piece(True, True, True, False))
-    b.place(0, 2, piece.Piece(True, True, False, True))
-    b.place(0, 3, piece.Piece(False, False, True, False))
-    b.place(1, 0, piece.Piece(True, True, False, False))
-    b.place(1, 1, piece.Piece(True, False, True, True))
-    b.place(1, 2, piece.Piece(True, False, True, False))
-    b.place(1, 3, piece.Piece(False, True, False, True))
-    b.place(2, 0, piece.Piece(True, False, False, False))
-    # b.place(2, 1, piece.Piece(False, False, True, True))
-    # b.place(2, 2, piece.Piece(True, False, False, True))
-    # b.place(2, 3, piece.Piece(False, True, True, True))
-    # b.place(3, 0, piece.Piece(False, True, False, False))
-    print(*find_losing_piece(copy.deepcopy(b), False))
-    print(len(boards_scores))
-    # print()
-    # for bo in sorted(boards_scores, key=str):
-    #     print(bo)
-    # b.place(0, 0, piece.Piece(True, True, True, True))
-    # boards_scores.add(b)
-    # boards_scores.add(copy.deepcopy(b))
-    # print(boards_scores)
-    g = game.Game()
-    g.find_losing_piece()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-b",
+        "--board",
+        help="The board state"
+    )
+    parser.add_argument(
+        "-p",
+        "--piece",
+        help="The piece you were given"
+    )
+    parser.add_argument(
+        "-i",
+        "--interactive",
+        help="Play your game and interact with the solver",
+        action="store_true"
+    )
+    parser.add_argument(
+        "-spi",
+        "--solve-piece",
+        help="Suggest a piece to give to the opponent",
+        action="store_true"
+    )
+    parser.add_argument(
+        "-spo",
+        "--solve-position",
+        help="Suggest where to put the piece you were given",
+        action="store_true"
+    )
+    args = parser.parse_args()
+    print(args)
 
 
 if __name__ == "__main__":
