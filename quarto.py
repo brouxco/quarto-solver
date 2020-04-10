@@ -11,47 +11,39 @@ def find_losing_piece(board, enemy):
     if hash(board) in boards_scores:
         return boards_scores[hash(board)]
     if board.is_move_losing():
-        return 1, None
+        return 1 if enemy else -1, None
     if len(board.available_pieces) == 0:
         return 0, None
-    # print()
     original_board = copy.deepcopy(board)
     pieces_score = [0 for _ in original_board.available_pieces]
     if not enemy:
         for i, p in enumerate(original_board.available_pieces):
             for move in original_board.allowed_moves():
                 board.place(*move, p)
-                score, _ = find_losing_piece(board, False)
+                score, _ = find_losing_piece(board, True)
                 pieces_score[i] += score
                 board = copy.deepcopy(original_board)
+        max_piece_index = pieces_score.index(max(pieces_score))
+        boards_scores[hash(original_board)] = (
+            pieces_score[max_piece_index],
+            original_board.available_pieces[max_piece_index]
+        )
     else:
         for i, p in enumerate(original_board.available_pieces):
             for move in original_board.allowed_moves():
                 board.place(*move, p)
-                score, _ = find_losing_piece(board, True)
+                score, _ = find_losing_piece(board, False)
                 pieces_score[i] += score
                 board = copy.deepcopy(original_board)
+        min_piece_index = pieces_score.index(min(pieces_score))
+        boards_scores[hash(original_board)] = (
+            pieces_score[min_piece_index],
+            original_board.available_pieces[min_piece_index]
+        )
     print(board)
     print(pieces_score)
     print(*original_board.available_pieces)
     print()
-    min_piece_score = 2**64
-    min_piece = None
-    for i, score in enumerate(pieces_score):
-        if score == 0:
-            continue
-        if score < min_piece_score:
-            min_piece_score = score
-            min_piece = original_board.available_pieces[i]
-
-    if min_piece is None:
-        min_piece_score = 0
-        min_piece = original_board.available_pieces[0]
-
-    boards_scores[hash(original_board)] = (
-        min_piece_score,
-        min_piece
-    )
     return boards_scores[hash(original_board)]
 
 
