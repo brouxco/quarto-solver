@@ -1,6 +1,12 @@
 # quarto-solver
 
-quarto-solver is a python program made to win every game of Quarto!
+quarto-solver is a python program made to help you win every game of Quarto!
+
+## Features
+
+- Play a game of Quarto.
+- Suggest what piece you should give to your opponent.
+- Suggest where to put the piece you were given.
 
 ## Installation
 
@@ -9,12 +15,6 @@ Clone the project.
 ```bash
 git clone https://github.com/brouxco/quarto-solver.git
 ```
-
-## Features
-
-- Play a game of Quarto.
-- Suggest what piece you should give to your opponent.
-- Suggest where to put the piece you were given.
 
 ## Usage
 
