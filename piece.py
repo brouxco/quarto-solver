@@ -1,13 +1,20 @@
 class Piece(object):
     def __init__(self,
-                 is_tall: bool,
-                 is_dark: bool,
-                 is_square: bool,
-                 is_solid: bool):
-        self.is_tall = is_tall
-        self.is_dark = is_dark
-        self.is_square = is_square
-        self.is_solid = is_solid
+                 is_tall: bool = True,
+                 is_dark: bool = True,
+                 is_square: bool = True,
+                 is_solid: bool = True,
+                 string: str = None):
+        if string:
+            self.is_tall = (string[0] == "1")
+            self.is_dark = (string[1] == "1")
+            self.is_square = (string[2] == "1")
+            self.is_solid = (string[3] == "1")
+        else:
+            self.is_tall = is_tall
+            self.is_dark = is_dark
+            self.is_square = is_square
+            self.is_solid = is_solid
 
     def __str__(self):
         return "{0}{1}{2}{3}".format(
@@ -50,11 +57,6 @@ class Piece(object):
                 or all_pieces_are_as_dark
                 or all_pieces_are_as_square
                 or all_pieces_are_as_solid)
-
-        # return (self.is_tall == other_piece.is_tall
-        #         or self.is_dark == other_piece.is_dark
-        #         or self.is_square == other_piece.is_square
-        #         or self.is_solid == other_piece.is_solid)
 
 
 if __name__ == "__main__":

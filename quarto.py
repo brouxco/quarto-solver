@@ -1,3 +1,4 @@
+import piece
 import game
 import board
 import argparse
@@ -38,27 +39,32 @@ def main():
     args = parser.parse_args()
 
     b = board.Board()
+    given_piece = None
 
     if args.board:
         # TODO(brouxco): import the board state
         pass
 
     if args.piece:
-        # TODO(brouxco): handle the piece
-        pass
+        given_piece = piece.Piece(string=args.piece)
+        print(given_piece)
 
     if args.interactive:
         while (not b.is_move_losing()):
-            score, piece = game.Game().monte_carlo(b, 1000)
+            if given_piece:
+                # TODO(brouxco): handle the piece
+                pass
+
+            score, p = game.Game().monte_carlo(b, 1000)
             print("Your should give this piece to your opponent: {}".format(
-                piece
+                p
             ))
             position = input("Where did the opponent put the piece (x,y): ")
             print(position)
             position = position.split(",")
             position = [int(x) for x in position]
             print(position)
-            b.place(*position, piece)
+            b.place(*position, p)
 
             print(b)
 

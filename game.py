@@ -1,14 +1,19 @@
 import copy
 import random
+import sys
+import signal
 
 # Contains the score, losing_piece and player
 boards_scores = dict()
+carlo = True
 
 
 class Game(object):
     # return score, losing_piece and player
     @staticmethod
     def min_max(board, opponent):
+        sys.stdout.write('\r' + str(len(boards_scores)))
+        sys.stdout.flush()
         if hash(board) in boards_scores:
             return boards_scores[hash(board)]
         if board.is_move_losing():
@@ -50,19 +55,29 @@ class Game(object):
                 original_board.available_pieces[min_piece_index],
                 opponent
             )
-        print(board)
-        print(pieces_score)
-        print(*original_board.available_pieces)
-        print()
+        # print(board)
+        # print(pieces_score)
+        # print(*original_board.available_pieces)
+        # print()
         return boards_scores[hash(original_board)]
 
     @staticmethod
+    def signal_handler(sig, frame):
+        global carlo
+        carlo = False
+
+    @staticmethod
     def monte_carlo(board, nb_iterations):
+        signal.signal(signal.SIGINT, Game.signal_handler)
         original_board = copy.deepcopy(board)
         # may be interesting to use a dictionary
         pieces_score = [0 for _ in original_board.available_pieces]
         # would be cool to run it until the user presses Ctrl+C (SIGINT)
-        for _ in range(nb_iterations):
+        iteration = 0
+        while carlo:
+            sys.stdout.write('\r' + str(iteration))
+            sys.stdout.flush()
+            iteration += 1
             board = copy.deepcopy(original_board)
 
             opponent = False
@@ -87,6 +102,9 @@ class Game(object):
                 pieces_score[i] += 1
             else:
                 pieces_score[i] -= 1
+
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
         max_piece_index = pieces_score.index(max(pieces_score))
 
